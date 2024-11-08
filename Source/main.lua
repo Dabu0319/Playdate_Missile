@@ -1,28 +1,67 @@
-import "dvd" -- DEMO
-local dvd = dvd(1, -1) -- DEMO
+import "CoreLibs/object"
+import "CoreLibs/graphics"
+import "CoreLibs/sprites"
+import "CoreLibs/timer"
 
-local gfx <const> = playdate.graphics
-local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
+import "knight"
 
-local function loadGame()
-	playdate.display.setRefreshRate(50) -- Sets framerate to 50 fps
-	math.randomseed(playdate.getSecondsSinceEpoch()) -- seed for math.random
-	gfx.setFont(font) -- DEMO
+
+local pd <const> = playdate
+local gfx <const> = pd.graphics
+
+local function initialize()
+	print("helloworld")
+	--drawCenteredText()
+
+	-- local knightImage = gfx.image.new("images/knight")
+	-- if knightImage then
+    --     local playerInstance = Player(200, 200, knightImage)  -- Ensure player instance is created
+    --     playerInstance:add()
+    -- else
+    --     print("Error: knight image not found.")
+    -- end 
+
+	local playerInstance = Knight(200, 200)
+	playerInstance:add()
+
+	-- Load a font
+	local font = gfx.font.new('font/Mini Sans 2X')
+    if font then
+        gfx.setFont(font)
+        print("Font loaded successfully.")
+    else
+        print("Error: Font not found.")
+    end
 end
 
-local function updateGame()
-	dvd:update() -- DEMO
+initialize()
+
+function pd.update()
+	gfx.clear()
+	gfx.setColor(gfx.kColorBlack)
+	
+
+	
+	gfx.sprite.update()
+
+
+	local text = "Hello World"
+    
+    -- Get text dimensions
+    local textWidth, textHeight = gfx.getTextSize(text)
+    
+    -- Calculate centered position
+    local x = (400 - textWidth) / 2
+    local y = (240 - textHeight) / 2
+    
+    -- Draw text at the center
+    gfx.drawText(text, x, y)
+	
+
+	pd.timer.updateTimers()
+	
+	
+	
 end
 
-local function drawGame()
-	gfx.clear() -- Clears the screen
-	dvd:draw() -- DEMO
-end
 
-loadGame()
-
-function playdate.update()
-	updateGame()
-	drawGame()
-	playdate.drawFPS(0,0) -- FPS widget
-end
