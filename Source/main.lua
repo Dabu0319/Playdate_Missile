@@ -18,7 +18,7 @@ local function initialize()
 	--initialize player
 	player = Player(200, 230)
 	table.insert(enemies, Enemy(50, 50, 1, 0.2)) 
-    table.insert(enemies, Enemy(150, 30, 1, 0.2))
+    table.insert(enemies, Enemy(150, 30, 1, 1))
 	
 	
 end

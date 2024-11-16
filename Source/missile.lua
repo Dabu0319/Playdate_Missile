@@ -16,7 +16,7 @@ function Missile:init(x, y, speed)
     self.angle = 0
     self.angleSpeed = 0.3
     self.type = "missile"
-    self:setCollideRect((self.width / 2) - 7.5, (self.height / 2) - 7.5, 15   , 15)
+    self:setCollideRect(0,  0,10  , 10)
     self:add()
 
     print("Missile initialized with type:", self.type)
