@@ -64,7 +64,14 @@ function Enemy:takeDamage(damage)
     self.health = self.health - damage
     if self.health <= 0 then
 
-
+        for i, enemy in ipairs(enemies) do
+            if enemy == self then
+                table.remove(enemies, i)
+                break
+            end
+        end
+        --remove from table
+        
         self:remove()
         print("Enemy destroyed")
         return false

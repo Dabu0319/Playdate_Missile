@@ -4,11 +4,16 @@ local gfx <const> = pd.graphics
 class('Missile').extends(gfx.sprite)
 
 function Missile:init(x, y, speed)
-    local missileImage = gfx.image.new("images/projectile")
-    if not missileImage then
-        print("Error: Failed to load missile image!") 
-        return
-    end
+    -- local missileImage = gfx.image.new("images/projectile")
+    -- if not missileImage then
+    --     print("Error: Failed to load missile image!") 
+    --     return
+    -- end
+    local missileImage = gfx.image.new(10, 10)
+    gfx.pushContext(missileImage)
+    gfx.setColor(gfx.kColorBlack)
+    gfx.fillCircleInRect(0, 0, 10, 10)
+    gfx.popContext()
     self:setImage(missileImage)
     self:moveTo(x, y)
 
@@ -16,7 +21,10 @@ function Missile:init(x, y, speed)
     self.angle = 0
     self.angleSpeed = 0.3
     self.type = "missile"
-    self:setCollideRect(0,  0,10  , 10)
+    --self:setCollideRect((self.width)/4,  (self.width)/4, (self.width)/2 , (self.width)/2)
+    self:setCollideRect(0, 0, 10, 10)
+    print("Sprite size:", self.width, self.height)
+    print("Collision rect:", self:getCollideRect())
     self:add()
 
     print("Missile initialized with type:", self.type)

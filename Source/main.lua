@@ -13,13 +13,35 @@ enemies = {}
 missile = nil
 missileState = "ready" -- state can be "ready" or "active"
 
+local function spawnEnemy()
+    local x = math.random(0, 400) 
+    local y = math.random(0, 120) 
+
+    -- insert
+    local newEnemy = Enemy(x, y, 1, 1)
+    table.insert(enemies, newEnemy)
+
+    --print("Enemy spawned at:", x, y)
+end
+
+local function startEnemySpawner()
+    -- 使用 pd.timer.new 设置定时器，并在每次触发时重新启动定时器
+    pd.timer.new(2000, function()
+        spawnEnemy()
+        startEnemySpawner() -- 递归调用，生成下一轮敌人
+    end)
+end
+
 local function initialize()
 
 	--initialize player
 	player = Player(200, 230)
-	table.insert(enemies, Enemy(50, 50, 1, 0.2)) 
-    table.insert(enemies, Enemy(150, 30, 1, 1))
-	
+	spawnEnemy()
+	spawnEnemy()
+
+	startEnemySpawner()
+
+
 	
 end
 
