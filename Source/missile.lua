@@ -3,18 +3,22 @@ local gfx <const> = pd.graphics
 
 class('Missile').extends(gfx.sprite)
 
+
+
+
+
 function Missile:init(x, y, speed)
     -- local missileImage = gfx.image.new("images/projectile")
     -- if not missileImage then
     --     print("Error: Failed to load missile image!") 
     --     return
     -- end
-    local missileImage = gfx.image.new(10, 10)
-    gfx.pushContext(missileImage)
+    self.originalImage = gfx.image.new(10, 10)
+    gfx.pushContext(self.originalImage)
     gfx.setColor(gfx.kColorBlack)
     gfx.fillCircleInRect(0, 0, 10, 10)
     gfx.popContext()
-    self:setImage(missileImage)
+    self:setImage(self.originalImage)
     self:moveTo(x, y)
 
     self.speed = speed or 1
@@ -26,6 +30,20 @@ function Missile:init(x, y, speed)
     print("Sprite size:", self.width, self.height)
     print("Collision rect:", self:getCollideRect())
     self:add()
+
+    local fps = pd.display.getRefreshRate()
+
+    self.scale = 1.0
+    self.shrinkTime = 5
+    self.shrinkRate = 1 / (self.shrinkTime * fps)
+    self.isFastShrink = false
+
+    --timer
+    self.timer = pd.timer.performAfterDelay(self.shrinkTime*1000, function()
+        self:remove()
+        missile = nil
+        missileState = "ready"
+    end)
 
     print("Missile initialized with type:", self.type)
 end
@@ -49,6 +67,27 @@ function Missile:update()
     
     local x, y = self:getPosition()
     self:moveWithCollisions(x + dx, y + dy)
+
+    --shrink
+    if pd.buttonIsPressed(pd.kButtonA) then
+        self.isFastShrink = true
+    else
+        self.isFastShrink = false
+    end
+
+    local currentShrinkRate = self.shrinkRate * (self.isFastShrink and 2 or 1)
+    self.scale -= currentShrinkRate
+
+    if self.scale <= 0 then
+        self:remove()
+        missile = nil
+        missileState = "ready"
+        return
+    end
+
+    local scaledImage = self.originalImage:scaledImage(math.max(self.scale, 0.01))
+    self:setImage(scaledImage)
+
 
     if y < 0 or x < 0 or x > 400 then
         self:remove()

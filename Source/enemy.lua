@@ -24,30 +24,32 @@ end
 function Enemy:update()
     Enemy.super.update(self)
 
-    if player then
-        local ex, ey = self:getPosition()
-        local px, py = player:getPosition()
+    --enemy move towards player
 
-        local dx = px - ex
-        local dy = py - ey
+    -- if player then
+    --     local ex, ey = self:getPosition()
+    --     local px, py = player:getPosition()
 
-        -- Calculate the distance between enemy and player
-        local distance = math.sqrt(dx^2 + dy^2)
+    --     local dx = px - ex
+    --     local dy = py - ey
 
-        -- If the enemy is close enough to the player, stop moving
-        if distance < 5 then -- 5 is the threshold; you can adjust it
-            return
-        end
+    --     -- Calculate the distance between enemy and player
+    --     local distance = math.sqrt(dx^2 + dy^2)
 
-        -- Normalize the direction vector
-        if distance > 0 then
-            dx = dx / distance
-            dy = dy / distance
-        end
+    --     -- If the enemy is close enough to the player, stop moving
+    --     if distance < 5 then -- 5 is the threshold; you can adjust it
+    --         return
+    --     end
 
-        -- Move the enemy towards the player
-        self:moveTo(ex + dx * self.speed, ey + dy * self.speed)
-    end
+    --     -- Normalize the direction vector
+    --     if distance > 0 then
+    --         dx = dx / distance
+    --         dy = dy / distance
+    --     end
+
+    --     -- Move the enemy towards the player
+    --     self:moveTo(ex + dx * self.speed, ey + dy * self.speed)
+    -- end
 
     return true
 end

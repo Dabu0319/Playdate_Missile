@@ -20,8 +20,12 @@ end
 
 function Player:fireMissile(x,y)
     if missileState == "ready" then
-        missile = Missile(200, 220, 2) 
+        missile = Missile(200, 220, 4) 
+        --local missile1 = Missile(200, 220, 2)
+
         missileState = "active" 
+        enemiesSpawned = false
+        
         print("Missile fired!")
     end
     
