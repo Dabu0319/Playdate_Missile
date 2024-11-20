@@ -61,19 +61,26 @@ function Missile:update()
     local crankChange = pd.getCrankChange()
     self.angle += crankChange * self.angleSpeed
     local radians = math.rad(self.angle)
-    local dx = math.sin(radians) * self.speed
-    local dy = -math.cos(radians) * self.speed
+
+    local currentSpeed = self.speed * (self.isFastShrink and 2 or 1)
+    
+    local dx = math.sin(radians) * currentSpeed
+    local dy = -math.cos(radians) * currentSpeed
 
     
     local x, y = self:getPosition()
     self:moveWithCollisions(x + dx, y + dy)
 
     --shrink
-    if pd.buttonIsPressed(pd.kButtonA) then
+    if pd.buttonIsPressed(pd.kButtonA) and missileState == "active" then
         self.isFastShrink = true
     else
         self.isFastShrink = false
     end
+
+    print("Missile speed:", self.speed)
+
+    print("isFastShrink:", self.isFastShrink)
 
     local currentShrinkRate = self.shrinkRate * (self.isFastShrink and 2 or 1)
     self.scale -= currentShrinkRate

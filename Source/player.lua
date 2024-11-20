@@ -19,7 +19,7 @@ function Player:init(x, y)
 end
 
 function Player:fireMissile(x,y)
-    if missileState == "ready" then
+    if missileState == "ready" and missile == nil then
         missile = Missile(200, 220, 4) 
         --local missile1 = Missile(200, 220, 2)
 
