@@ -19,27 +19,46 @@ function Player:init(x, y)
 end
 
 function Player:fireMissile(x,y)
-    if missileState == "ready" and missile == nil then
-        missile = Missile(200, 220, 4) 
+    if  missile == nil and missileCount>0 then
+        missile = Missile(200, 220, 2) 
         --local missile1 = Missile(200, 220, 2)
 
         missileState = "active" 
         enemiesSpawned = false
-        
-        print("Missile fired!")
+        missileCount -= 1
+        --print("Missile fired!")
+
+
     end
     
 end
 
+-- function Player:drawMissiles()
+--     local startX = 220 
+--     local startY = 10  
+--     local spacing = 15
+
+--     for i = 1, missileCount do
+--         gfx.setColor(gfx.kColorBlack)
+--         gfx.fillCircleAtPoint(startX, startY + (i - 1) * spacing, 5)
+--     end
+    
+-- end
+
 
 function Player:update()
-    --print helloworld
-    --print("Hello World")
+    
+    --Player.super.update(self)
+
+    --gfx.clear()
+
     if pd.buttonJustPressed(pd.kButtonA) then
         -- This block will only execute once per button press
-        print("Button A just pressed")
+        --print("Button A just pressed")
         self:fireMissile()
     end
+
+    --self:drawMissiles()
     
 
 

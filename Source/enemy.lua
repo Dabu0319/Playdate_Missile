@@ -18,7 +18,7 @@ function Enemy:init(x, y, speed, health)
     self.type = "enemy"
     self:add()
 
-    print("Enemy type after init:", type(self))
+    --print("Enemy type after init:", type(self))
 end
 
 function Enemy:update()
@@ -52,6 +52,10 @@ function Enemy:update()
     -- end
 
     return true
+end
+
+function Enemy:remove()
+    gfx.sprite.remove(self)
 end
 
 function Enemy:collisionResponse(other)

@@ -4,9 +4,12 @@ import "CoreLibs/timer"
 import "missile"
 import "player"
 import "enemy"
+import "sound_manager"
 
 local pd <const> = playdate
 local gfx = pd.graphics
+
+
 
 player = nil
 enemies = {}
@@ -14,6 +17,11 @@ missile = nil
 missileState = "ready" -- state can be "ready" or "active"
 enemiesSpawned = false
 
+score = 0 
+missileCount = 5
+gameState = "playing" 
+
+missileTrails = {}
 
 
 local function spawnEnemy()
@@ -37,6 +45,21 @@ local function spawnEnemies(count)
 end
 
 
+local function drawMissiles()
+	if not player then return end
+	local playerX, playerY = player.x, player.y
+	local startX = playerX + 20
+	local startY = playerY + 5
+    local spacing = 15 
+
+    
+    for i = 1, missileCount do
+        gfx.setColor(gfx.kColorBlack)
+        gfx.fillCircleAtPoint(startX + (i - 1) * spacing, startY, 5)
+    end
+end
+
+
 
 local function startEnemySpawner()
     -- Spawn a new enemy every 2 seconds
@@ -54,16 +77,58 @@ local function initialize()
 	--spawnEnemy()
 
 	--startEnemySpawner()
+	spawnEnemies(3)
+
+	if SoundManager then
+        SoundManager.stopBGM()
+        SoundManager.init()
+        SoundManager.resetBGM()
+    end
+	
+
 
 
 	
 end
 
+local function restartGame()
+
+	SoundManager.stopBGM()
+	
+	--player = Player(200, 230)
+	missile = nil
+	missileState = "ready"
+	enemies = {}
+	score = 0
+	missileCount = 5
+	gameState = "playing"
+
+	for i = #enemies, 1, -1 do
+        local enemy = enemies[i]
+        enemy:remove()
+        table.remove(enemies, i)
+    end
+
+	local allSprites = gfx.sprite.getAllSprites()
+    for _, sprite in ipairs(allSprites) do
+        if sprite.type == "enemy" then
+            sprite:remove()
+        end
+    end
+
+
+
+	initialize()
+end
+
+initialize()
+
 
 
 function pd.update()
-    gfx.sprite.update()
-    pd.timer.updateTimers()
+
+	gfx.clear()
+
 
 	
 	-- if player then
@@ -82,11 +147,68 @@ function pd.update()
 	-- 	end
 	-- end
 
-	if missile == nil and not enemiesSpawned then
-        spawnEnemies(3)
-    end
+	if gameState == "playing" then
+
+		gfx.sprite.update()
+		pd.timer.updateTimers()
+
+		--trail
+		for i, pos in ipairs(missileTrails) do
+			local alpha = 1 - (i / #missileTrails) 
+			gfx.setColor(gfx.kColorBlack)
+			gfx.setDitherPattern(alpha)
+			gfx.fillCircleAtPoint(pos.x, pos.y, 2)
+		end
+
+		--draw score
+		local screenWidth = 400
+		local scoreText = "Score: " .. score
+		local scoreWidth = gfx.getTextSize(scoreText)
+		local scoreX = (screenWidth - scoreWidth) / 2
+		gfx.drawText(scoreText, scoreX, 10) 
+
+
+		drawMissiles()
+
+        if missile == nil and not enemiesSpawned then
+            spawnEnemies(3)
+        end
+
+
+
+
+	elseif gameState == "gameover" then
+		gfx.clear()
+	
+		local screenWidth = 400 
+		local gameOverText = "Game Over"
+		local scoreText = "Score: " .. score
+		local restartText = "Press A to Restart"
+	
+		
+		local gameOverWidth = gfx.getTextSize(gameOverText)
+		local scoreWidth = gfx.getTextSize(scoreText)
+		local restartWidth = gfx.getTextSize(restartText)
+	
+		
+		local gameOverX = (screenWidth - gameOverWidth) / 2
+		local scoreX = (screenWidth - scoreWidth) / 2
+		local restartX = (screenWidth - restartWidth) / 2
+	
+		
+		gfx.drawText(gameOverText, gameOverX, 80)
+		gfx.drawText(scoreText, scoreX, 110)
+		gfx.drawText(restartText, restartX, 140)
+	
+		
+		if pd.buttonJustPressed(pd.kButtonA) then
+			restartGame()
+		end
+	end
+
+	-- print("Missile state:", missileState)
+	-- print(missile)
 
 end
 
 
-initialize()
