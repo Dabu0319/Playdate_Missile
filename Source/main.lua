@@ -10,18 +10,19 @@ local pd <const> = playdate
 local gfx = pd.graphics
 
 
+missileState = "ready" -- state can be "ready" or "active"
+gameState = "playing" -- state can be "playing" or "gameover"
 
 player = nil
 enemies = {}
 missile = nil
-missileState = "ready" -- state can be "ready" or "active"
+missileTrails = {}
+missileCount = 5
+
 enemiesSpawned = false
 
 score = 0 
-missileCount = 5
-gameState = "playing" 
 
-missileTrails = {}
 
 
 local function spawnEnemy()
@@ -38,7 +39,7 @@ end
 
 -- Spawn multiple enemies at once
 local function spawnEnemies(count)
-    for i = 1, count do
+    for _ = 1, count do
         spawnEnemy()
     end
 	enemiesSpawned = true
@@ -47,9 +48,7 @@ end
 
 local function drawMissiles()
 	if not player then return end
-	local playerX, playerY = player.x, player.y
-	local startX = playerX + 20
-	local startY = playerY + 5
+	local startX, startY = player.x + 20, player.y + 5
     local spacing = 15 
 
     
@@ -73,8 +72,7 @@ local function initialize()
 
 	--initialize player
 	player = Player(200, 230)
-	--spawnEnemy()
-	--spawnEnemy()
+
 
 	--startEnemySpawner()
 	spawnEnemies(3)
@@ -84,11 +82,6 @@ local function initialize()
         SoundManager.init()
         SoundManager.resetBGM()
     end
-	
-
-
-
-	
 end
 
 local function restartGame()
@@ -103,18 +96,23 @@ local function restartGame()
 	missileCount = 5
 	gameState = "playing"
 
-	for i = #enemies, 1, -1 do
-        local enemy = enemies[i]
-        enemy:remove()
-        table.remove(enemies, i)
-    end
+	-- for i = #enemies, 1, -1 do
+    --     local enemy = enemies[i]
+    --     enemy:remove()
+    --     table.remove(enemies, i)
+    -- end
 
-	local allSprites = gfx.sprite.getAllSprites()
-    for _, sprite in ipairs(allSprites) do
-        if sprite.type == "enemy" then
-            sprite:remove()
-        end
+	for _, enemy in ipairs(enemies) do
+        enemy:remove()
     end
+    enemies = {}
+
+	-- local allSprites = gfx.sprite.getAllSprites()
+    -- for _, sprite in ipairs(allSprites) do
+    --     if sprite.type == "enemy" then
+    --         sprite:remove()
+    --     end
+    -- end
 
 
 

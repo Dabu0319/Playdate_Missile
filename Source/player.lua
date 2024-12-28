@@ -33,17 +33,6 @@ function Player:fireMissile(x,y)
     
 end
 
--- function Player:drawMissiles()
---     local startX = 220 
---     local startY = 10  
---     local spacing = 15
-
---     for i = 1, missileCount do
---         gfx.setColor(gfx.kColorBlack)
---         gfx.fillCircleAtPoint(startX, startY + (i - 1) * spacing, 5)
---     end
-    
--- end
 
 
 function Player:update()
