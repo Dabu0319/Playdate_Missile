@@ -22,6 +22,7 @@ function Missile:init(x, y, speed)
     gfx.fillCircleAtPoint(6, 6, 5)
     gfx.popContext()
     self:setImage(self.originalImage)
+
     self:moveTo(x, y)
 
     --init movement
@@ -29,6 +30,8 @@ function Missile:init(x, y, speed)
     self.angle = 0
     self.angleSpeed = 0.3
     self.type = "missile"
+    self:setGroups({2})
+    self:setCollidesWithGroups({3})
     --self:setCollideRect((self.width)/4,  (self.width)/4, (self.width)/2 , (self.width)/2)
     self:setCollideRect(0, 0, 10, 10)
     --print("Sprite size:", self.width, self.height)
@@ -66,24 +69,27 @@ end
 
 
 function Missile:destroy()
-
+    -- 清空导弹轨迹
     if missileTrails then
         for _, pos in ipairs(missileTrails) do
-            gfx.setColor(gfx.kColorWhite) 
+            gfx.setColor(gfx.kColorWhite)
             gfx.fillCircleAtPoint(pos.x, pos.y, 2)
         end
     end
     missileTrails = {}
-    
+
     self:remove()
     missile = nil
     missileState = "ready"
+    destroyedEnemies = 0
+
+    -- 暂停敌人生成计时器
+    pauseEnemySpawner()
 
     if missileCount == 0 then
-        gameState = "gameover"
+        setGameState("gameover")
     end
 end
-
 
 
 function Missile:update()
@@ -172,3 +178,4 @@ function Missile:collisionResponse(other)
 
     end
 end
+
