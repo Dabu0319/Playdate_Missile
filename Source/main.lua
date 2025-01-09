@@ -6,13 +6,21 @@ import "player"
 import "enemy"
 import "sound_manager"
 
+import "test"
+
 local pd <const> = playdate
 local gfx = pd.graphics
+
+
+-- local BG = BG()
+-- BG:init()
 
 -- 全局变量
 stateHandlers = {}
 missileState = "ready" -- 状态："ready" 或 "active"
-gameState = "playing" -- 状态："playing" 或 "gameover"
+gameState = "start" -- 状态："playing" 或 "gameover" 或 "start"
+
+
 
 player = nil
 enemies = {}
@@ -165,6 +173,16 @@ local function restartGame()
     setGameState("playing")
 end
 
+
+
+local function startGame()
+    setGameState("playing")
+    initialize()
+
+    
+end
+
+
 -- 游戏中状态更新
 local function playingUpdate()
     gfx.clear()
@@ -210,10 +228,22 @@ local function gameOver()
     gfx.drawTextAligned("Press A to Restart", 200, 140, kTextAlignment.center)
 end
 
--- 初始化游戏
-initialize()
+local function startMenu()
+    gfx.clear()
+    gfx.drawTextAligned("Press A to Start", 200, 80, kTextAlignment.center)
+    
+end
+
+
+
+
+
+
+
 stateHandlers["playing"] = playingUpdate
 stateHandlers["gameover"] = gameOver
+stateHandlers["start"] = startMenu
+
 
 -- 主更新函数
 function pd.update()
@@ -227,6 +257,8 @@ function pd.update()
             restartGame() -- 重新开始游戏
         elseif gameState == "playing" and player then
             player:fireMissile()
+        elseif gameState == "start" then
+            startGame()
         end
     end
 end
